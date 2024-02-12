@@ -4,6 +4,7 @@ const ShortUniqueId = require("short-unique-id");
 const { isValidUrl } = require("../utils/urlValidator");
 const { isValidExpirationDate } = require("../utils/expirationValidator");
 const Url = require("../models/url");
+const { authenticateToken } = require("../service/auth");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 //   "expirationDate": "2024-12-31"
 // }
 
-router.post("/new", async (req, res) => {
+router.post("/new", authenticateToken, async (req, res) => {
   const { originalUrl, expirationDate, customKeyword, user } = req.body;
 
   // Check if the URL is valid
@@ -57,7 +58,6 @@ router.post("/new", async (req, res) => {
 
     // Respond with the shortened URL
     res.status(201).json({ message: "success", newUrl });
-    console.log("url created");
   } catch (error) {
     console.error("Error verifying URL:", error.message);
     return res.status(400).json({ error: "Invalid or inaccessible URL" });

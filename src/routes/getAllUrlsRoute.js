@@ -1,11 +1,12 @@
 const express = require("express");
 const Url = require("../models/url");
 const mongoose = require("mongoose");
+const { authenticateToken } = require("../service/auth");
 
 const router = express.Router();
 
 // API endpoint to get the data for a short URL
-router.post("/all-url", async (req, res) => {
+router.post("/all-url", authenticateToken, async (req, res) => {
   const { _id } = req.body;
 
   try {

@@ -1,10 +1,12 @@
 const express = require("express");
 const User = require("../models/user");
 const { comparePassword } = require("../utils/bcryptPass");
+const jwt = require("jsonwebtoken");
+const { secret_jwt } = require("../config/config");
 
 const router = express.Router();
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, _id } = req.body;
 
   try {
     // Find the user by email
@@ -15,16 +17,27 @@ router.post("/login", async (req, res) => {
     }
 
     const passwordMatch = await comparePassword(password, user.password);
+
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid password 😥" });
     }
 
-    res.status(200).json({
-      message: "Login successful",
-      user: { email: user.email, _id: user.id },
-    });
+    if (user && passwordMatch) {
+      const token = jwt.sign(
+        { _id: user._id.toString(), email: user.email },
+        secret_jwt,
+        { expiresIn: "1m" }
+      );
+
+      user.token = token;
+      user.password = undefined;
+
+      res.status(200).json({ user });
+    }
   } catch (error) {
-    console.error(error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
