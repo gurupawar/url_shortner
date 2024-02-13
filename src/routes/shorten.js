@@ -16,11 +16,12 @@ const router = express.Router();
 // }
 
 router.post("/new", authenticateToken, async (req, res) => {
+  console.log(req.body);
   const { originalUrl, expirationDate, customKeyword, user } = req.body;
 
   // Check if the URL is valid
   if (!isValidUrl(originalUrl)) {
-    return res.status(400).json({ error: "Invalid URL" });
+    return res.status(400).json({ message: "Invalid URL", status: 400 });
   }
 
   try {
@@ -28,20 +29,26 @@ router.post("/new", authenticateToken, async (req, res) => {
 
     // Check if the response status code indicates success (2xx or 3xx)
     if (!(response.status >= 200 && response.status < 400)) {
-      return res.status(400).json({ error: "Invalid or inaccessible URL" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or inaccessible URL", status: 400 });
     }
 
     // Check if the custom keyword is already in use
     if (customKeyword !== undefined && customKeyword !== "") {
       const existingUrlWithCustomKeyword = await Url.findOne({ customKeyword });
       if (existingUrlWithCustomKeyword) {
-        return res.status(400).json({ error: "Custom keyword already in use" });
+        return res
+          .status(400)
+          .json({ message: "Custom keyword already in use", status: 400 });
       }
     }
 
     // Validate expiration date if provided
     if (expirationDate && !isValidExpirationDate(expirationDate)) {
-      return res.status(400).json({ error: "Invalid expiration date" });
+      return res
+        .status(400)
+        .json({ message: "Invalid expiration date", status: 400 });
     }
 
     // Generate a short ID for the URL if no custom keyword is provided
@@ -57,10 +64,10 @@ router.post("/new", authenticateToken, async (req, res) => {
     await newUrl.save();
 
     // Respond with the shortened URL
-    res.status(201).json({ message: "success", newUrl });
+    res.status(201).json({ message: "success", newUrl, status: 201 });
   } catch (error) {
     console.error("Error verifying URL:", error.message);
-    return res.status(400).json({ error: "Invalid or inaccessible URL" });
+    return res.status(400).json({ message: "Invalid or inaccessible URL" });
   }
 });
 

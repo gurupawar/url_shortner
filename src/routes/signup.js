@@ -21,7 +21,7 @@ router.post("/signin", async (req, res) => {
   const hashedPassword = await hashPassword(password);
 
   const token = jwt.sign({ email: email }, secret_jwt, {
-    expiresIn: "1m",
+    expiresIn: "1D",
   });
 
   const newUser = new User({
