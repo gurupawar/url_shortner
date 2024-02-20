@@ -9,6 +9,7 @@ const analyticsRoute = require("./src/routes/analyticsRoute");
 const signup = require("./src/routes/signup");
 const login = require("./src/routes/login");
 const getAllUrlsRoute = require("./src/routes/getAllUrlsRoute");
+const deleteUrl = require("./src/routes/deleteUrl");
 
 dotenv.config();
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/shorten", shortenRoute);
 app.use("/", redirectRoute);
 app.use("/api", analyticsRoute);
 app.use("/api", getAllUrlsRoute);
+app.use("/api", deleteUrl);
 
 7;
 

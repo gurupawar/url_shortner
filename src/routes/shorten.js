@@ -34,14 +34,14 @@ router.post("/new", authenticateToken, async (req, res) => {
     }
 
     try {
-      const response = await axios.head(originalUrl);
+      // const response = await axios.head(originalUrl);
 
-      // Check if the response status code indicates success (2xx or 3xx)
-      if (!(response.status >= 200 && response.status < 400)) {
-        return res
-          .status(400)
-          .json({ message: "Invalid or inaccessible URL", status: 400 });
-      }
+      // // Check if the response status code indicates success (2xx or 3xx)
+      // if (!(response.status >= 200 && response.status < 400)) {
+      //   return res
+      //     .status(400)
+      //     .json({ message: "Invalid or inaccessible URL", status: 400 });
+      // }
 
       // Check if the custom keyword is already in use
       if (customKeyword !== undefined && customKeyword !== "") {

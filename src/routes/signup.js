@@ -3,7 +3,6 @@ const User = require("../models/user");
 const { hashPassword } = require("../utils/bcryptPass");
 const jwt = require("jsonwebtoken");
 const { secret_jwt } = require("../config/config");
-const user = require("../models/user");
 
 const router = express.Router();
 
@@ -32,12 +31,18 @@ router.post("/signup", async (req, res) => {
       token: token,
     });
     const createdUser = await newUser.save();
-    console.log("createdUser", createdUser);
+
+    console.log(createdUser);
 
     // Respond with the shortened URL
     res.status(201).json({
       message: "Account has been successfully created 🎉",
-      user: createdUser,
+      user: {
+        email: createdUser.email,
+        token: createdUser.token,
+        _id: createdUser._id,
+        _v: createdUser._v,
+      },
       status: 201,
     });
   } catch (error) {
