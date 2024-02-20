@@ -5,7 +5,9 @@ const ShortUniqueId = require("short-unique-id");
 const { isValidUrl } = require("../utils/urlValidator");
 const { isValidExpirationDate } = require("../utils/expirationValidator");
 const Url = require("../models/url");
+const jwt = require("jsonwebtoken");
 const { authenticateToken } = require("../service/auth");
+const { secret_jwt } = require("../config/config");
 
 const router = express.Router();
 
@@ -18,9 +20,12 @@ const router = express.Router();
 
 router.post("/new", authenticateToken, async (req, res) => {
   const { originalUrl, expirationDate, customKeyword, user } = req.body;
+  const token = req.headers["authorization"];
+
+  const decode = jwt.verify(token, secret_jwt);
 
   try {
-    const userdd = await User.findOne({ _id: user._id });
+    const userdd = await User.findOne({ _id: decode._id });
 
     if (userdd === null) {
       return res
@@ -67,7 +72,7 @@ router.post("/new", authenticateToken, async (req, res) => {
       const shortUrl = customKeyword || randomUUID();
 
       const newUrl = new Url({
-        user: user._id,
+        user: decode._id,
         originalUrl,
         shortUrl,
         expirationDate,

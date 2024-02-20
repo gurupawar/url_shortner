@@ -8,27 +8,23 @@ const router = express.Router();
 
 router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { _id: userId } = req.body;
+  const token = req.headers["authorization"];
+  const decode = jwt.verify(token, secret_jwt);
+  console.log(decode._id);
+  console.log(id);
 
   try {
-    const token = req.headers.authorization;
-    const decoded = jwt.verify(token, secret_jwt);
+    const urls = await Url.find({ user: decode._id });
 
-    if (decoded._id === userId) {
-      const deletedUrl = await Url.findByIdAndDelete(id);
+    console.log(urls);
+    const deletedUrl = await Url.findByIdAndDelete(id);
 
-      if (!deletedUrl) {
-        return res.status(400).json({ message: "Url not found!", status: 400 });
-      } else {
-        res.status(200).json({
-          message: "URL has been successfully deleted 🥲",
-          status: 200,
-        });
-      }
+    if (!deletedUrl) {
+      return res.status(400).json({ message: "Url not found!", status: 400 });
     } else {
-      return res.status(403).json({
-        message: "You are not authorized to delete this URL",
-        status: 403,
+      res.status(200).json({
+        message: "URL has been successfully deleted 🥲",
+        status: 200,
       });
     }
   } catch (error) {

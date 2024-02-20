@@ -45,13 +45,14 @@ app.use(
   )
 );
 
-app.use("/auth", signup);
-app.use("/auth", login);
-app.use("/api/shorten", shortenRoute);
-app.use("/", redirectRoute);
-app.use("/api", analyticsRoute);
-app.use("/api", getAllUrlsRoute);
-app.use("/api", deleteUrl);
+app.use("/auth", signup); //post
+app.use("/auth", login); //post
+app.use("/api/shorten", shortenRoute); //post
+app.use("/api", getAllUrlsRoute); //post
+app.use("/api", deleteUrl); //post
+
+app.use("/", redirectRoute); //get
+app.use("/api", analyticsRoute); //get
 
 7;
 

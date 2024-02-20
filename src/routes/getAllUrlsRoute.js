@@ -2,20 +2,23 @@ const express = require("express");
 const Url = require("../models/url");
 const mongoose = require("mongoose");
 const { authenticateToken } = require("../service/auth");
+const { secret_jwt } = require("../config/config");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
 // API endpoint to get the data for a short URL
 router.post("/all-url", authenticateToken, async (req, res) => {
-  const { _id } = req.body;
+  const token = req.headers["authorization"];
+  const decode = jwt.verify(token, secret_jwt);
 
   try {
     // Validation: Check if _id is a valid MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
+    if (!mongoose.Types.ObjectId.isValid(decode._id)) {
       return res.status(400).json({ error: "Invalid _id format" });
     }
 
-    const urls = await Url.find({ user: _id });
+    const urls = await Url.find({ user: decode._id });
 
     if (urls.length === 0) {
       return res

@@ -25,24 +25,10 @@ router.post("/signup", async (req, res) => {
       expiresIn: "1D",
     });
 
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      token: token,
-    });
-    const createdUser = await newUser.save();
-
-    console.log(createdUser);
-
     // Respond with the shortened URL
     res.status(201).json({
       message: "Account has been successfully created 🎉",
-      user: {
-        email: createdUser.email,
-        token: createdUser.token,
-        _id: createdUser._id,
-        _v: createdUser._v,
-      },
+      token: token,
       status: 201,
     });
   } catch (error) {

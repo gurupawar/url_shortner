@@ -33,10 +33,7 @@ router.post("/login", async (req, res) => {
         { expiresIn: "1D" }
       );
 
-      user.token = token;
-      user.password = undefined;
-
-      res.status(200).json({ user });
+      res.status(200).json({ token, status: 200 });
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
