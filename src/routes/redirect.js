@@ -1,6 +1,7 @@
 const express = require("express");
 const requestIp = require("request-ip");
 const iplocate = require("node-iplocate");
+const UAParser = require("ua-parser-js");
 const Url = require("../models/url");
 
 const router = express.Router();
@@ -17,6 +18,11 @@ router.get("/:shortUrl", async (req, res) => {
   let country = "N/A";
   let city = "N/A";
 
+  const userAgent = req.headers["user-agent"];
+  const parser = new UAParser();
+  const result = parser.setUA(userAgent).getResult();
+
+  console.log(result);
   try {
     const ipDetails = await iplocate(ipAddress);
     if (ipDetails) {
@@ -35,7 +41,29 @@ router.get("/:shortUrl", async (req, res) => {
       const analyticsData = {
         timestamp: new Date(),
         ipAddress: ipAddress || "N/A",
-        userAgent: req.headers["user-agent"],
+        userAgent: {
+          us: result.ua || "N/A",
+          browser: {
+            name: result.browser.name || "N/A",
+            version: result.browser.version || "N/A",
+          },
+          engine: {
+            name: result.engine.name || "N/A",
+            version: result.engine.version || "N/A",
+          },
+          os: {
+            name: result.os.name || "N/A",
+            version: result.os.version || "N/A",
+          },
+          device: {
+            vendor: result.device.vendor || "N/A",
+            model: result.device.model || "N/A",
+            deviceType: result.device.type || "N/A",
+          },
+          cpu: {
+            architecture: result.cpu.architecture || "N/A",
+          },
+        },
         country,
         city,
       };
