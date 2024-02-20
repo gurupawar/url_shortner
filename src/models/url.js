@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-const userAgentSchema = new mongoose.Schema({});
 const urlSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -10,6 +9,10 @@ const urlSchema = new mongoose.Schema({
   originalUrl: {
     type: String,
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
   shortUrl: {
     type: String,

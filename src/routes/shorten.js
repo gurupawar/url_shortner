@@ -65,12 +65,14 @@ router.post("/new", authenticateToken, async (req, res) => {
       // Generate a short ID for the URL if no custom keyword is provided
       const { randomUUID } = new ShortUniqueId({ length: 10 });
       const shortUrl = customKeyword || randomUUID();
+
       const newUrl = new Url({
         user: user._id,
         originalUrl,
         shortUrl,
         expirationDate,
         customKeyword,
+        createdAt: Date.now(),
       });
       await newUrl.save();
 
