@@ -6,20 +6,24 @@ const { secret_jwt } = require("../config/config");
 
 const router = express.Router();
 router.post("/login", async (req, res) => {
-  const { email, password, _id } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Find the user by email
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials", status: 401 });
     }
 
     const passwordMatch = await comparePassword(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid password 😥" });
+      return res
+        .status(401)
+        .json({ message: "Invalid password 😥", status: 401 });
     }
 
     if (user && passwordMatch) {
@@ -36,9 +40,9 @@ router.post("/login", async (req, res) => {
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expired" });
+      return res.status(401).json({ message: "Token expired", status: 401 });
     }
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", status: 500 });
   }
 });
 

@@ -80,11 +80,15 @@ router.post("/new", authenticateToken, async (req, res) => {
       res.status(201).json({ message: "success", newUrl, status: 201 });
     } catch (error) {
       console.error("Error verifying URL:", error.message);
-      return res.status(400).json({ message: "Invalid or inaccessible URL" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or inaccessible URL", status: 400 });
     }
   } catch (error) {
     console.error("Error occurred:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", status: 500 });
   }
 });
 
