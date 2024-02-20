@@ -29,8 +29,22 @@ mongoose
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
+const router = express.Router();
 
 // Use route handlers
+app.use(
+  "/",
+  router.get("/", (req, res) =>
+    res.send({
+      message: "Welcome to the URL shortener API",
+      API_URL: "https://short-me.onrender.com",
+      documentation: "https://github.com/gurupawar/url_shortner",
+      author: "https://github.com/gurupawar",
+      frontend: "https://github.com/gurupawar/url_shortner-frontend",
+    })
+  )
+);
+
 app.use("/auth", signup);
 app.use("/auth", login);
 app.use("/api/shorten", shortenRoute);

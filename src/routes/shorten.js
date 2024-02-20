@@ -1,5 +1,5 @@
 const express = require("express");
-const axios = require("axios");
+// const axios = require("axios");
 const User = require("../models/user");
 const ShortUniqueId = require("short-unique-id");
 const { isValidUrl } = require("../utils/urlValidator");
