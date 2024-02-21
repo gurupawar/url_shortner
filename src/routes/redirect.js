@@ -3,12 +3,13 @@ const requestIp = require("request-ip");
 const iplocate = require("node-iplocate");
 const UAParser = require("ua-parser-js");
 const Url = require("../models/url");
+const { checkExpiration } = require("../utils/expirationValidator");
 
 const router = express.Router();
 // API endpoint to redirect to the original URL
 // localhost:3000/LLfspQgrs
 
-router.get("/:shortUrl", async (req, res) => {
+router.get("/:shortUrl", checkExpiration, async (req, res) => {
   const { shortUrl } = req.params;
   const ipAddress = requestIp.getClientIp(req);
 
@@ -22,7 +23,6 @@ router.get("/:shortUrl", async (req, res) => {
   const parser = new UAParser();
   const result = parser.setUA(userAgent).getResult();
 
-  console.log(result);
   try {
     const ipDetails = await iplocate(ipAddress);
     if (ipDetails) {

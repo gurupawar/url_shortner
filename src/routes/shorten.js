@@ -35,7 +35,18 @@ router.post("/new", authenticateToken, async (req, res) => {
 
     // Check if the URL is valid
     if (!isValidUrl(originalUrl)) {
-      return res.status(400).json({ message: "Invalid URL", status: 400 });
+      let conditionalMessage = "";
+
+      const isContained =
+        originalUrl.startsWith("https://") || originalUrl.startsWith("http://");
+
+      if (isContained !== true)
+        conditionalMessage =
+          "The URL is invalid as it does not contain  https:// or http://";
+      return res.status(400).json({
+        message: conditionalMessage || "Invalid URL",
+        status: 400,
+      });
     }
 
     try {
