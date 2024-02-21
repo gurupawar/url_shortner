@@ -3,14 +3,21 @@ const User = require("../models/user");
 const { hashPassword } = require("../utils/bcryptPass");
 const jwt = require("jsonwebtoken");
 const { secret_jwt } = require("../config/config");
+const { validationResult } = require("express-validator");
 
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
   try {
-    // Check if the user already exists with the given email or username
-    const existingUser = await User.findOne({ email });
+    const errors = validationResult(req); // Validate request body
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    // Check if the user already exists with the given email
+    let existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res
@@ -18,14 +25,25 @@ router.post("/signup", async (req, res) => {
         .json({ message: "User already exists 😒", status: 400 });
     }
 
-    // Hash the user's password before saving it
     const hashedPassword = await hashPassword(password);
 
-    const token = jwt.sign({ email: email }, secret_jwt, {
-      expiresIn: "1D",
+    // Create new user
+    const newUser = new User({
+      email: email,
+      password: hashedPassword,
     });
 
-    // Respond with the shortened URL
+    const { email: newEmail, _id } = await newUser.save();
+
+    const token = jwt.sign(
+      { _id: _id.toString(), email: newEmail },
+      secret_jwt,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    // Respond with success message and token
     res.status(201).json({
       message: "Account has been successfully created 🎉",
       token: token,
@@ -38,4 +56,5 @@ router.post("/signup", async (req, res) => {
       .json({ message: "Internal Server Error", status: 500 });
   }
 });
+
 module.exports = router;

@@ -33,6 +33,8 @@ router.post("/login", async (req, res) => {
         { expiresIn: "1D" }
       );
 
+      const decoded = jwt.verify(token, secret_jwt);
+      console.log("decoded,", decoded);
       res.status(200).json({ token, status: 200 });
     }
   } catch (error) {
