@@ -22,7 +22,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    // If URL found and belongs to user, delete it
+    // If URL found and belongs to user, delete it.
     const deletedUrl = await Url.findByIdAndDelete(id);
 
     if (!deletedUrl) {
